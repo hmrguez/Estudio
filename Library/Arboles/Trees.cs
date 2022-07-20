@@ -51,11 +51,9 @@ public class Arbol<T>
     {
         yield return Value;
         foreach (var item in Children)
-        {
             if (item != null)
                 foreach (var item2 in item.DFS())
                     yield return item2;
-        }
     }
     public IEnumerable<T> BFS()
     {
@@ -70,7 +68,16 @@ public class Arbol<T>
             cola.Dequeue();
         }
     }
-
+    public IEnumerable<Arbol<T>> DFSTree()
+    {
+        yield return this;
+        foreach (var item in Children)
+            if (item != null)
+                foreach (var item2 in item.DFSTree())
+                    yield return item2;
+    }
+    public bool Contains(T x) => DFS().Contains(x);
+    public bool Contains(Arbol<T> x) => DFSTree().Contains(x);
 }
 
 public static class Utils
@@ -82,5 +89,19 @@ public static class Utils
         var x = Build(array, start, mid);
         var y = Build(array, mid + 1, end);
         return new Arbol<T>(array[mid], x, y);
+    }
+    public static Arbol<T> LCA<T>(Arbol<T> x1, Arbol<T> x2, Arbol<T> raiz)
+    {
+        foreach (var item in raiz.Children)
+            if (item.Contains(x1) && item.Contains(x2))
+                return LCA(x1, x2, item);
+        return raiz;
+    }
+    public static Arbol<T> LCA<T>(T x1, T x2, Arbol<T> raiz)
+    {
+        foreach (var item in raiz.Children)
+            if (item.Contains(x1) && item.Contains(x2))
+                return LCA(x1, x2, item);
+        return raiz;
     }
 }
