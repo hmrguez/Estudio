@@ -8,6 +8,12 @@ public class Arbol<T>
         Children = children;
     }
 
+    public Arbol(T value, IEnumerable<Arbol<T>> children)
+    {
+        Value = value;
+        Children = children;
+    }
+
     public T Value { get; set; }
     public IEnumerable<Arbol<T>> Children { get; set; }
     public int Height
