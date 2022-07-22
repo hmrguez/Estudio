@@ -69,12 +69,12 @@ public class Folder : IFolder
 
     public IEnumerable<IFile> GetFiles()
     {
-        for (int i = 0; i < Files.Count; i++) yield return Files[i];
+        for (int i = 0; i < Files.OrderBy(x=>x.Name).Count(); i++) yield return Files.OrderBy(x=>x.Name).ToArray()[i];
     }
 
     public IEnumerable<IFolder> GetFolders()
     {
-        for (int i = 0; i < Folders.Count; i++) yield return Folders[i];
+        for (int i = 0; i < Folders.OrderBy(x=>x.Name).Count(); i++) yield return Folders.OrderBy(x=>x.Name).ToArray()[i];
     }
 
     //El tamano total es el de todos los archivos que tenga la carpeta mas el tamano total de todas sus carpetas
