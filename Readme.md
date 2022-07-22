@@ -18,6 +18,7 @@ Inside each folder you can find basic algorithms for each section along with a f
   - Ways to traverse a tree: PreOrder, InOrder, PostOrder
   - Building a Binary Search Tree
   - Changing a whole Tree
+  - A Tree based mock of a File System
 - Iterative Programming
   - Lee Algorithm for solving mazes
 
