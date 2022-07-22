@@ -10,6 +10,7 @@ public class Exam
 //Excepciones para controlar mejor el FileSystem
 public class NotAFolderException : Exception { }
 public class NotAFileException : Exception { }
+public class NotAFileOrFolderException : Exception { }
 
 public interface IFile
 {
@@ -102,6 +103,7 @@ public class FileSystem : IFileSystem
     public Folder Root { get; set; }
     public FileSystem() => Root = new Folder("/");
     public static string[] Parse(string path) => path.Split('/', StringSplitOptions.RemoveEmptyEntries);
+    public static string[] GetParentDirectory(string path) => Parse(path).Where(x => x != Parse(path).Last()).ToArray();
 
     public IEnumerable<IFile> Find(FileFilter filter)
     {
@@ -166,22 +168,16 @@ public class FileSystem : IFileSystem
 
     public void Delete(string path)
     {
-        //Consigueme la carpeta de la cual este archivo o carpeta tiene como padre
-        //Lo hago simplemente sacando todos los elementos del array parseado menos el ultimo
-        var root = GetFolder(Parse(path).Where(x=>x!=Parse(path).Last()).ToArray(),0) as Folder;
-        try
-        {
-            //Si es un archivo entra aqui y se quita de la lista de archivos
-            var file = GetFile(path) as File;
-            root!.Files.Remove(file!);
-        }
-        catch (NotAFileException)
-        {
-            //Si no es un archivo entra aqui y se quita de la lista de carpetas
-            //Si no es nada aqui dara una excepcion de que no es carpeta
-            var folder = GetFolder(path) as Folder;
-            root!.Folders.Remove(folder!);
-        }
+        //Coge la carpeta que representa el padre de este directorio
+        var directory = GetParentDirectory(path);
+        var root = GetFolder(directory, 0) as Folder;
+        var last = Parse(path).Last();
+
+        //Revisa entre todos los archivos y carpetas de esa carpeta por el que tenga el mismo nombre que el ultimo elemento del directorio y lo borra
+        bool cumple = false;
+        for (int i = 0; i < root!.Files.Count; i++) if (root.Files[i].Name == last) cumple = root.Files.Remove(root.Files[i]);
+        for (int i = 0; i < root.Folders.Count; i++) if (root.Folders[i].Name == last) cumple = root.Folders.Remove(root.Folders[i]);
+        if (!cumple) throw new NotAFileOrFolderException();
     }
     public void Move(string origin, string destination)
     {
@@ -193,17 +189,26 @@ public class FileSystem : IFileSystem
 
     public void Copy(string origin, string destination)
     {
+        //Coge la carpeta que representa el padre de este directorio origen y la carpeta que representa el destino
         var end = GetFolder(destination) as Folder;
-        try
-        {
-            var start = GetFile(origin) as File;
-            CopyFile(start!, end!);
-        }
-        catch (NotAFileException)
-        {
-            var start = GetFolder(origin) as Folder;
-            CopyFolder(start!, end!);
-        }
+        var directory = GetFolder(GetParentDirectory(origin), 0) as Folder;
+        var last = Parse(origin).Last();
+
+        //Revisa entre los archivos y carpetas por el que coincida con el nombre del ultimo valor del directorio origen y lo copia a la carpeta destino
+        bool cumple = false;
+        for (int i = 0; i < directory!.Files.Count; i++) 
+            if (directory.Files[i].Name == last)
+            {
+                cumple = true;
+                CopyFile(directory.Files[i], end!);
+            }
+        for (int i = 0; i < directory.Folders.Count; i++) 
+            if (directory.Folders[i].Name == last)
+            {
+                cumple = true;
+                CopyFolder(directory.Folders[i], end!);
+            }
+        if (!cumple) throw new NotAFileOrFolderException();
     }
     public void CopyFile(File file, Folder destination)
     {
