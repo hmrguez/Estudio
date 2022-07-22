@@ -2,10 +2,7 @@ public delegate bool FileFilter(IFile file);
 
 public class Exam
 {
-    public static IFileSystem CreateFileSystem()
-    {
-        return new FileSystem();
-    }
+    public static IFileSystem CreateFileSystem() => new FileSystem();
 }
 
 #region "File and Folder"
@@ -77,8 +74,7 @@ public class Folder : IFolder
 
     public IEnumerable<IFolder> GetFolders()
     {
-        for (int i = 0; i < Folders.Count; i++)
-            yield return Folders[i];
+        for (int i = 0; i < Folders.Count; i++) yield return Folders[i];
     }
 
     //El tamano total es el de todos los archivos que tenga la carpeta mas el tamano total de todas sus carpetas
