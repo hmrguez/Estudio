@@ -1,6 +1,6 @@
-# Estudio
+# Study
 
-Una guide with all possible algorithms to study for a freshman year CS final exam
+A guide with all possible algorithms to study for a freshman year CS final exam
 
 Covers all, from iterative programming, to backtracking to working with trees.
 
