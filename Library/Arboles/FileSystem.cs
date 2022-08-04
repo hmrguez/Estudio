@@ -85,8 +85,6 @@ public class Folder : IFolder
 
 public interface IFileSystem
 {
-    Folder Root { get; set; }
-
     void Copy(string origin, string destination);
     void Delete(string path);
     IEnumerable<IFile> Find(FileFilter filter);
