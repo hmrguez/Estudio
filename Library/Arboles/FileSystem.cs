@@ -54,6 +54,7 @@ public class Folder : IFolder
     public List<Folder> Folders { get; }
     public List<File> Files { get; }
 
+
     public IFile CreateFile(string name, int size)
     {
         var x = new File(size, name);
@@ -68,15 +69,9 @@ public class Folder : IFolder
         return x;
     }
 
-    public IEnumerable<IFile> GetFiles()
-    {
-        for (int i = 0; i < Files.OrderBy(x=>x.Name).Count(); i++) yield return Files.OrderBy(x=>x.Name).ToArray()[i];
-    }
+    public IEnumerable<IFile> GetFiles() => Files.OrderBy(x=>x.Name);
 
-    public IEnumerable<IFolder> GetFolders()
-    {
-        for (int i = 0; i < Folders.OrderBy(x=>x.Name).Count(); i++) yield return Folders.OrderBy(x=>x.Name).ToArray()[i];
-    }
+    public IEnumerable<IFolder> GetFolders() => Folders.OrderBy(x=>x.Name);
 
     //El tamano total es el de todos los archivos que tenga la carpeta mas el tamano total de todas sus carpetas
     public int TotalSize() => Files.Sum(x => x.Size) + Folders.Sum(x => x.TotalSize());
